@@ -54,7 +54,7 @@ class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class"""
 
     REDACTION = "***"
-    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)-15s: %(message)s"
+    FORMAT = "[HOLBERTON] %(name)s %(levelname)s %(asctime)s: %(message)s"
     SEPARATOR = ";"
 
     def __init__(self, fields):
@@ -65,3 +65,31 @@ class RedactingFormatter(logging.Formatter):
         original_message = super().format(record)
         return filter_datum(self.fields, self.REDACTION, original_message,
                             self.SEPARATOR)
+
+
+def main() -> None:
+    """Function to get database connection using get_db
+    retrieves and shows all rows displaying each in the users table
+    """
+    db = get_db()
+    cursor = db.cursor()
+
+    query = ('SELECT * FROM users;')
+    cursor.execute(query)
+    fetch_data = cursor.fetchall()
+
+    logger = get_logger()
+
+    for row in fetch_data:
+        fields = 'name={}; email={}; phone={}; ssn={}; password={}; ip={}; '\
+            'last_login={}; user_agent={};'
+        fields = fields.format(row[0], row[1], row[2], row[3],
+                               row[4], row[5], row[6], row[7])
+        logger.info(fields)
+
+    cursor.close()
+    db.close()
+
+
+if __name__ == "__main__":
+    main()
