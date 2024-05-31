@@ -9,7 +9,8 @@ from mysql.connector import connection
 PII_FIELDS = ('name', 'email', 'password', 'ssn', 'phone')
 
 
-def filter_datum(fields, redaction, message, separator):
+def filter_datum(fields: List[str], redaction: str, message: str,
+                 separator: str) -> str:
     """
     Function to get an obfuscated message
     Args:
@@ -19,8 +20,8 @@ def filter_datum(fields, redaction, message, separator):
         separator: string reping characters for separating fields
     """
     for field in fields:
-        message = re.sub(field + "=.*?" + separator,
-                         field + "=" + redaction + separator, message)
+        message = re.sub(rf"{field}=(.*?)\{separator}",
+                         f"{field}={redaction}{separator}", message)
     return message
 
 
