@@ -15,3 +15,7 @@ def unauthorizedError(error) -> str:
     outcome = jsonify({"error": "Unauthorized"})
     outcome.status_code = 401
     return outcome
+
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
