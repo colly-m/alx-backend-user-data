@@ -17,5 +17,12 @@ def unauthorizedError(error) -> str:
     return outcome
 
 
+@app.errorhandler(403)
+def forbid_error(error):
+    outcome = jsonify({"error": "Forbidden"})
+    outcome.status_code = 403
+    return outcome
+
+
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000)
