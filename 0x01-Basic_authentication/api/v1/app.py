@@ -6,6 +6,7 @@ from api.v1.views.index import app_views
 import os
 from api.v1.auth.auth import Auth
 from api.v1.auth.basic_auth import BasicAuth
+from typing import Literal, Optional
 
 
 app = Flask(__name__)
@@ -14,13 +15,16 @@ app.register_blueprint(app_views)
 auth = None
 
 if getenv("AUTH_TYPE") == "auth":
+    from api.v1.auth.auth import Auth
     auth = Auth()
+
+
 elif getenv("AUTH_TYPE") == "basic_auth":
     auth = BasicAuth()
 
 
 @app.errorhandler(401)
-def unauthorizedError(error) -> str:
+def unauthorized(error) -> tuple[str, Literal[401]]:
     """Function to define and return error for unauthorized"""
     outcome = jsonify({"error": "Unauthorized"})
     outcome.status_code = 401
@@ -28,14 +32,15 @@ def unauthorizedError(error) -> str:
 
 
 @app.errorhandler(403)
-def forbid_error(error):
+def forbidden(error) -> tuple[str, Literal[403]]:
+    """FUnction to forbid authorization"""
     outcome = jsonify({"error": "Forbidden"})
     outcome.status_code = 403
     return outcome
 
 
 @app.before_request
-def before_request(i):
+def before_request() -> Optional[str]:
     """Function to filter each request"""
     if auth is None:
         return
@@ -49,7 +54,6 @@ def before_request(i):
 
     if auth.current_user(request) is None:
         abort(403)
-
 
 
 if __name__ == "__main__":

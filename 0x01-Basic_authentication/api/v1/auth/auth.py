@@ -10,7 +10,6 @@ User = TypeVar('User')
 class Auth:
     """Class fo manage API authentifications"""
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
-        """Function to require for authorization and returns bolean"""
         if path is None:
             return True
         if excluded_paths is None or not excluded_paths:
@@ -29,9 +28,12 @@ class Auth:
 
     def authorization_header(self, request=None) -> str:
         """"Function to check for authorized header"""
-        if request is None:
-            return None
-        return request.headers.get('Authorization')
+        key = 'Authorization'
+
+        if request is None or key not is request.headers:
+            return
+        return request.headers.get(key)
+
 
     def current_user(self, request=None) -> User:
         """Function to return None on request"""
