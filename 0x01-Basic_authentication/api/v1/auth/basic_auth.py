@@ -50,6 +50,23 @@ class BasicAuth(Auth):
             return (res[0], res[1])
         return (None, None)
 
+    def user_object_from_credentials(self,
+                                     user_email: str,
+                                     user_pwd: str) -> TypeVar('User'):
+        """Function to return User instance based on email and pswd """
+        if user_email is None or not isinstance(user_email, str):
+            return None
+        if user_pwd is None or not isinstance(user_pwd, str):
+            return None
+        try:
+            users = User.search({'email': user_email})
+        except Exception:
+            return None
+        for user in users:
+            if user.is_valid_password(user_pwd):
+                return user
+            return None
+
     def current_user(self, request=None) -> TypeVar('User'):
         """
         Function to overload Auth and retrieve the User instance for a request
