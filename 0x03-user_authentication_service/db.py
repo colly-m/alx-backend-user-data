@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.exc import InvalidRequestError
+from typing import TypeVar
 
 
 from user import Base, User
@@ -40,10 +41,10 @@ class DB:
         Returns:
         User: The newly created User object
         """
-        new_user = User(email=email, hashed_password=hashed_password)
-        self._session.add(new_user)
+        user = User(email=email, hashed_password=hashed_password)
+        self._session.add(user)
         self._session.commit()
-        return new_user
+        return user
 
     def find_user_by(self, **kwargs) -> User:
         """Function to find user in the database by given keyword args
@@ -57,8 +58,8 @@ class DB:
         """
         try:
             outcome = self._session.query(User).filter_by(**kwargs).first()
-        except TypeError:
+            if outcome is None:
+                raise NoResultFound
+            return outcome
+        except InvalidRequestError as e:
             raise InvalidRequestError
-        if outcome is None:
-            raise NoResultFound
-        return outcome
