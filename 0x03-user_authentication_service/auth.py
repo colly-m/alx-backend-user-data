@@ -2,7 +2,10 @@
 """Module to define a method that take password and retun bytes"""
 import bcrypt
 from db import DB
+from typing import TypeVag
+from sqlalchemy.orm.exc import NoResultFound
 from user import User
+import uuid
 
 
 class Auth:
@@ -49,3 +52,7 @@ class Auth:
                                    user.hashed_password):
             return True
         return False
+
+    def _generate_uuid() -> str:
+        """Function to generate a new UUID and string representation"""
+        return str(uuid.uuid4())
