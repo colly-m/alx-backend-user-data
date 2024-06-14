@@ -52,9 +52,14 @@ def reset_password_token(email: str) -> str:
 
 
 def update_password(email: str, reset_token: str, new_password: str) -> None:
-    response = requests.put(f"/reset_password", data={"email": email,
-                            "reset_token": reset_token,
-                                                  "new_password": new_password})
+    response = requests.put(
+            f"/reset_password",
+            data={
+                "email": email,
+                "reset_token": reset_token,
+                "new_password": new_password
+                }
+            )
     assert response.status_code == 200
     assert response.json() == {"email": email, "message": "password updated"}
 
